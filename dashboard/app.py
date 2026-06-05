@@ -126,7 +126,7 @@ disclmr_sb = st.sidebar.container(border=True, height='content')
 if tab1.open == True:
     
     with tab1:
-        st.markdown("*This view provides aggregate indicators for total institutional energy usage and data integrity over time.*")
+        st.markdown("""*This view provides aggregate indicators for total institutional energy usage and data integrity over time. Expand sidebar for details.*""")
         agg_0, agg_1 = st.columns([.5,.5])
 
         with metrics_sb:
@@ -219,7 +219,8 @@ if tab1.open == True:
 if tab2.open == True:
     
     with tab2:
-        st.markdown("*This view provides forecasting and summary information for a specific location and utility-provider.*")
+        st.markdown("""*This view provides forecasting and summary information for a specific location and utility-provider.* 
+                    *Adjust* Forecast Length, Error Threshold (Flagged Readings) *or change* Meter *by expanding sidebar, making selections and submitting* Recast""")
         st.table(loc_data[['Utility_Company','Meter','Location','Service_Address','Account']].rename(columns=lambda x: x.replace('_', ' '))) 
 
 
@@ -237,7 +238,7 @@ if tab2.open == True:
 
         with site_sb_fcxt:
             with st.form('Recalculate Forecast', border=False):
-                st.markdown("Forecast Adjust:")
+                st.markdown("Forecast Length:")
                 st.select_slider(
                     "Select (how many months):",
                     options= np.arange(1,48),
@@ -357,7 +358,7 @@ if tab2.open == True:
 
     with chart_left:
         with st.container(border=True):
-            st.markdown("""**Flagged :material/bolt: Readings**  \n*Error Tthreshold sifting*""")
+            st.markdown("""**Flagged :material/bolt: Readings**  \n*Error Threshold sifting*""")
             st.dataframe(chart_data[chart_data['Outer']==True],
             column_order=['Date','KWH','USD','Residual','Seasonal','Trend','CDF'],
             column_config={"Date":st.column_config.DateColumn("Date", format="MMM-YYYY"),
