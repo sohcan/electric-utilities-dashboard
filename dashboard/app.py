@@ -243,7 +243,7 @@ if tab2.open == True:
                     value= 6,
                     key="fxct_key"
                     )
-                st.markdown("Error Threshold:", text_alignment="center")
+                st.markdown("Error Threshold", text_alignment="center")
                 st.select_slider(
                     "Select standard deviation scaling:",
                     options= np.arange(1,6.25,.25),
