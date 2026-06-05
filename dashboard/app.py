@@ -397,7 +397,6 @@ if tab3.open == True:
                         }
                         )   
 
-                st.write(type(new_Date))
                 st.session_state['kWh'] = pd.concat([st.session_state['kWh'], new_read_row], ignore_index=True)
                 st.success(f"New Reading Added for {new_Date.strftime('%-m/%d/%Y')}!")
                 time.sleep(1.0)
