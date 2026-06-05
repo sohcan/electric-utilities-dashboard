@@ -223,7 +223,7 @@ if tab2.open == True:
                 st.select_slider(
                     "Select standard deviation scaling:",
                     options= np.arange(1,6.25,.25),
-                    value=2.5,
+                    value=1,
                     key="thresh_key"
                     )
                 re_cast_submit = st.form_submit_button("Re-Cast")
