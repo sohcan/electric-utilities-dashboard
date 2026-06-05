@@ -1,4 +1,5 @@
 import os.path
+from pydoc import text
 
 import pandas as pd
 import numpy as np
@@ -121,7 +122,7 @@ st.subheader("Electrical awareness and forecasting.")
 
 tab1, tab2, tab3 = st.tabs(["Installation 550XA", f"{loc_data['Location'].item()}" , "Add Items"], on_change='rerun')
 metrics_sb = st.sidebar.container(border=True, height='content')
-disclmr_sb = st.sidebar.container(border=True, height='content')
+
 
 if tab1.open == True:
     
@@ -153,7 +154,7 @@ if tab1.open == True:
                 if re_show_multi_meter_select:
                     multi_meter_select(mloc, find_meter_options, loc_dat_col, search, show_anyway=True)
                     #search_df = multi_meter_select(mloc, find_meter_options, loc_dat_col, search)              
-        with disclmr_sb:
+        with st.sidebar.container(border=True, height='content'):
             st.markdown("""**The North Takoma Space National Guard** *is composed of wholly-synthetic but 'plausible sounding': locations, variable types, variable quantities, costs, and nominal descriptions.*""")
         st.space(size="small")
     
@@ -217,7 +218,7 @@ if tab1.open == True:
 
 
 if tab2.open == True:
-    
+
     with tab2:
         st.markdown("""*This view provides forecasting and summary information for a specific location and utility-provider.* 
                     *Adjust* Forecast Length, Error Threshold (Flagged Readings) *or change* Meter *by expanding sidebar, making selections and submitting* Recast""")
@@ -230,34 +231,31 @@ if tab2.open == True:
             Breakdown of meter readings with a seasonal decomposition, trends and notable outliers are predicted.''')
             st.markdown('''*Caution:* forecasting with less than 24 months of observation may be insufficient for reasonable analyses.''')
            
-        st.space(size="small")
-
-        #site_sb_shart = st.sidebar.container(border=True, horizontal=False, height='content')
         site_sb_fcxt = st.sidebar.container(border=True, horizontal=True, height='content')
         site_sb_select = st.sidebar.container(border=True, horizontal=False, height='content')
 
         with site_sb_fcxt:
             with st.form('Recalculate Forecast', border=False):
-                st.markdown("Forecast Length:")
+                st.markdown("Forecast Length", text_alignment="center")
                 st.select_slider(
                     "Select (how many months):",
                     options= np.arange(1,48),
                     value= 6,
                     key="fxct_key"
                     )
-                st.markdown("Error Threshold:")
+                st.markdown("Error Threshold:", text_alignment="center")
                 st.select_slider(
                     "Select standard deviation scaling:",
                     options= np.arange(1,6.25,.25),
                     value=1,
                     key="thresh_key"
                     )
-                re_cast_submit = st.form_submit_button("Recast")
+                re_cast_submit = st.form_submit_button("Recast", width="stretch")
                 if re_cast_submit:
                     st.session_state['animate'] = True
 
         with site_sb_select:
-            st.markdown('Additional')
+            st.markdown('Location Data', text_alignment="center")
             with st.popover("Select Meter", width="stretch"):
                 find_meter_options = {"Utility Name":'Utility_Company', "Account #":'Account',"Service Address":'Service_Address', "Meter":'Meter_Char', "Location":'Location'}
                 loc_dat_col = st.radio("Find meter by:", options = (find_meter_options), index=4)
@@ -269,18 +267,6 @@ if tab2.open == True:
                 re_show_multi_meter_select = st.button('Meter')
                 if re_show_multi_meter_select:
                     multi_meter_select(mloc, find_meter_options, loc_dat_col, search, show_anyway=True)
-
-            #with st.popover("Add New Billing Data", width="stretch"):
-                #with st.form(key="billing_form", border=False):
-                    #new_Date = st.date_input("Meter Read Date", min_value = chart_data[['Date','Observed']].dropna().tail(1).Date.item(), value=chart_data[['Date','Observed']].dropna().tail(1).Date.item())
-                    #new_KWH = st.number_input("kWh Used", min_value=0, format="%d")
-                    #new_total_cost = st.number_input("Total Cost ($)", min_value=0.0, format="%.2f")
-                    #new_read_row = pd.DataFrame({'Meter':[meter],'Date':[new_Date],'KWH':[new_KWH],'USD':[new_total_cost]})
-                    #submit_button = st.form_submit_button(label="Save Data")
-                    #if submit_button:
-                        #st.session_state['new_reading'] = pd.concat([st.session_state['new_reading'], new_read_row], ignore_index=True)
-
-
        
     with st.container(border=True):
         fcst_title = st.markdown(f"""**Meter {meter} Forecast**  \nSeasonal-Trend LOESS Decomposition and Forecasting.""")  
