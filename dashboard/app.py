@@ -28,6 +28,25 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown(
+    """
+    <style>
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            }
+            h1 {
+                letter-spacing: -0.03em;
+            }
+            div[data-testid="stMarkdownContainer"] p {
+                line-height: 1.45;
+                }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 render_info_banner()
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -96,19 +115,25 @@ if 'new_reading' not in st.session_state:
 
 first_index = 0; current_index = -2; last_index = -1
 
+
+st.title("Energy Signal")
+st.subheader("Electrical awareness and forecasting.")
+
 tab1, tab2, tab3 = st.tabs(["Installation 550XA", f"{loc_data['Location'].item()}" , "Add Items"], on_change='rerun')
 metrics_sb = st.sidebar.container(border=True, height='content')
+disclmr_sb = st.sidebar.container(border=True, height='content')
 
 if tab1.open == True:
+    
     with tab1:
-
-        agg_0, agg_1, context_0 = st.columns([.45,.45,.1])
+        st.markdown("*This view provides aggregate indicators for total institutional energy usage and data integrity over time.*")
+        agg_0, agg_1 = st.columns([.5,.5])
 
         with metrics_sb:
             image_0 = st.image(logo_path, width=200, caption="")
 
             st.markdown('''***Installation Metrics***  
-                Aggregated measures of cost, demand, and current data set across the NTANG Virtual Installation''')
+                Aggregated measures of cost, demand, and current data set across the NTSNG Virtual Installation''')
 
             st.markdown(f'''Tab **Installation 550XA** is the current tab.''')
             st.markdown(f'''Tab **{loc_data['Location'].item()}** shows meter {meter} data, use dropdown below to change.''')     
@@ -128,73 +153,73 @@ if tab1.open == True:
                 if re_show_multi_meter_select:
                     multi_meter_select(mloc, find_meter_options, loc_dat_col, search, show_anyway=True)
                     #search_df = multi_meter_select(mloc, find_meter_options, loc_dat_col, search)              
-                
+        with disclmr_sb:
+            st.markdown("""**The North Takoma Space National Guard** *is composed of wholly-synthetic but 'plausible sounding': locations, variable types, variable quantities, costs, and nominal descriptions.*""")
         st.space(size="small")
     
-    with agg_0:
-        st.metric(
-            "Installation Energy Usage",
-            f"{cd_KWH.iloc[current_index].round():,.0f} kWh",
-            f"{((cd_KWH.iloc[current_index]-cd_KWH.mean())/cd_KWH.mean())*100:.2f}%",
-            help=r"$D_t = \frac{E_t - \bar{E}}{\bar{E}}$",
-            chart_data=cd_KWH,
-            chart_type="area",
-            border=True,
-            delta_description= f"{cd_USD.index[current_index].strftime('%b')} {cd_USD.index[current_index].strftime('%Y')} : "
-        )
+        with agg_0:
+            st.metric(
+                "Installation Energy Usage",
+                f"{cd_KWH.iloc[current_index].round():,.0f} kWh",
+                f"{((cd_KWH.iloc[current_index]-cd_KWH.mean())/cd_KWH.mean())*100:.2f}%",
+                help=r"$D_t = \frac{E_t - \bar{E}}{\bar{E}}$",
+                chart_data=cd_KWH,
+                chart_type="area",
+                border=True,
+                delta_description= f"{cd_USD.index[current_index].strftime('%b')} {cd_USD.index[current_index].strftime('%Y')} : "
+            )
 
-        st.metric(
-            "Total Energy Cost",
-            f"${cd_USD.iloc[current_index]:,.2f}",
-            f"{((cd_USD.iloc[current_index]-cd_USD.mean())/cd_USD.mean())*100:.2f}%",
-            help=r"$\Delta C_t = \frac{C_t - \bar{C}}{\bar{C}}$",
-            chart_data=cd_USD,
-            chart_type="area",
-            border=True,
-            delta_description= f"{cd_USD.index[current_index].strftime('%b')} {cd_USD.index[current_index].strftime('%Y')}"
-        )
+            st.metric(
+                "Total Energy Cost",
+                f"${cd_USD.iloc[current_index]:,.2f}",
+                f"{((cd_USD.iloc[current_index]-cd_USD.mean())/cd_USD.mean())*100:.2f}%",
+                help=r"$\Delta C_t = \frac{C_t - \bar{C}}{\bar{C}}$",
+                chart_data=cd_USD,
+                chart_type="area",
+                border=True,
+                delta_description= f"{cd_USD.index[current_index].strftime('%b')} {cd_USD.index[current_index].strftime('%Y')}"
+            )
 
 
-    with agg_1:
+        with agg_1:
 
-        st.metric(
-            "Meter Reading Count",
-            f"{cd_MCO.iloc[last_index].round():,.0f} Recorded",
-            f"{(cd_MCO.iloc[last_index] - cd_MCO.iloc[current_index]) :.0f}",
-            help=r"$\Delta N_t = N_t - N_{t-1}$",
-            chart_data=cd_MCO,
-            chart_type="bar",
-            border=True,
-            delta_description= f"{cd_USD.index[last_index].strftime('%b')} {cd_USD.index[last_index].strftime('%Y')}"
-        )
+            st.metric(
+                "Meter Reading Count",
+                f"{cd_MCO.iloc[last_index].round():,.0f} Recorded",
+                f"{(cd_MCO.iloc[last_index] - cd_MCO.iloc[current_index]) :.0f}",
+                help=r"$\Delta N_t = N_t - N_{t-1}$",
+                chart_data=cd_MCO,
+                chart_type="bar",
+                border=True,
+                delta_description= f"{cd_USD.index[last_index].strftime('%b')} {cd_USD.index[last_index].strftime('%Y')}"
+            )
 
-        st.metric(
-            "Blended Rate:",
-            f"${(cd_USD.sum()/cd_KWH.sum()):.3f}/KWh",
-            help=r"$R = \frac{\sum C}{\sum E}$",
-            chart_data=cd_USD/cd_KWH,
-            chart_type="bar",
-            border=True,
-            delta_description= f"{cd_USD.index[current_index].strftime('%b')} {cd_USD.index[current_index].strftime('%Y')}",
-        ) 
+            st.metric(
+                "Blended Rate:",
+                f"${(cd_USD.sum()/cd_KWH.sum()):.3f}/KWh",
+                help=r"$R = \frac{\sum C}{\sum E}$",
+                chart_data=cd_USD/cd_KWH,
+                chart_type="bar",
+                border=True,
+                delta_description= f"{cd_USD.index[current_index].strftime('%b')} {cd_USD.index[current_index].strftime('%Y')}",
+            )
 
-        st.metric(
-            "Total Energy Trend",
-            f"{cd_TRN.iloc[current_index].round():,.0f} kWh", # "${(cd_USD.sum()/cd_KWH.sum().round())*cd_KWH.iloc[current_index].sum() - (cd_USD.sum().round()/cd_KWH.sum().round())*cd_KWH.mean() :,.2f}" ,
-            f"{((cd_TRN.iloc[current_index]-cd_TRN.mean())/cd_TRN.mean())*100:.2f}%",
-            help=r"$\Delta T_t = \frac{T_t - \bar{T}}{\bar{T}}$",
-            chart_data=cd_TRN.iloc[first_index:current_index],
-            chart_type="line",
-            border=True,
-            delta_description= f"{cd_TRN.index[first_index].strftime('%b')} {cd_TRN.index[first_index].strftime('%y')} - {cd_TRN.index[current_index].strftime('%b')} {cd_TRN.index[current_index].strftime('%y')}"
-        )
+    st.metric(
+        "Total Energy Trend",
+        f"{cd_TRN.iloc[current_index].round():,.0f} kWh", # "${(cd_USD.sum()/cd_KWH.sum().round())*cd_KWH.iloc[current_index].sum() - (cd_USD.sum().round()/cd_KWH.sum().round())*cd_KWH.mean() :,.2f}" ,
+        f"{((cd_TRN.iloc[current_index]-cd_TRN.mean())/cd_TRN.mean())*100:.2f}%",
+        help=r"$\Delta T_t = \frac{T_t - \bar{T}}{\bar{T}}$",
+        chart_data=cd_TRN.iloc[first_index:current_index],
+        chart_type="line",
+        border=True,
+        delta_description= f"{cd_TRN.index[first_index].strftime('%b')} {cd_TRN.index[first_index].strftime('%y')} - {cd_TRN.index[current_index].strftime('%b')} {cd_TRN.index[current_index].strftime('%y')}"
+    )
 
-    with context_0:
-        ""
 
 if tab2.open == True:
+    
     with tab2:
-        agg_00, agg_01, context_00 = st.columns([.4,.5,.1])
+        st.markdown("*This view provides forecasting and summary information for a specific location and utility-provider.*")
         st.table(loc_data[['Utility_Company','Meter','Location','Service_Address','Account']].rename(columns=lambda x: x.replace('_', ' '))) 
 
 
@@ -212,7 +237,7 @@ if tab2.open == True:
 
         with site_sb_fcxt:
             with st.form('Recalculate Forecast', border=False):
-                st.markdown("Re-Forecast:")
+                st.markdown("Forecast Adjust:")
                 st.select_slider(
                     "Select (how many months):",
                     options= np.arange(1,48),
@@ -226,7 +251,7 @@ if tab2.open == True:
                     value=1,
                     key="thresh_key"
                     )
-                re_cast_submit = st.form_submit_button("Re-Cast")
+                re_cast_submit = st.form_submit_button("Recast")
                 if re_cast_submit:
                     st.session_state['animate'] = True
 
@@ -255,11 +280,12 @@ if tab2.open == True:
                         #st.session_state['new_reading'] = pd.concat([st.session_state['new_reading'], new_read_row], ignore_index=True)
 
 
-    fcst_title = st.markdown(f"Meter {meter} Forecast")     
+       
     with st.container(border=True):
+        fcst_title = st.markdown(f"""**Meter {meter} Forecast**  \nSeasonal-Trend LOESS Decomposition and Forecasting.""")  
         with st.container(border=False):
             fxct_len = st.select_slider(
-                "Chart Projection, Select (monthly):",
+                "Forecast Length (by month):",
                 options = cont_forecast[['Date','Forecast']].dropna(),
                 format_func = lambda x: x.strftime('%b %Y'),
                 value = cont_forecast['Date'].dropna().tail(1).item(),
@@ -314,7 +340,7 @@ if tab2.open == True:
 
     with chart_right:
         with st.container(border=True):
-            st.markdown(f" Seasonality :material/bolt: {loc_data['Utility_Company'].item()}")
+            st.markdown(f""" Seasonality and Account :material/bolt:  \n*Provider: {loc_data['Utility_Company'].item()}*""")
             #{loc_data['Location'].item()}
             st.dataframe(
                 loc_data,
@@ -331,7 +357,7 @@ if tab2.open == True:
 
     with chart_left:
         with st.container(border=True):
-            st.markdown('Flagged :material/bolt: Readings')
+            st.markdown("""**Flagged :material/bolt: Readings**  \n*Error Tthreshold sifting*""")
             st.dataframe(chart_data[chart_data['Outer']==True],
             column_order=['Date','KWH','USD','Residual','Seasonal','Trend','CDF'],
             column_config={"Date":st.column_config.DateColumn("Date", format="MMM-YYYY"),
@@ -400,6 +426,6 @@ if tab3.open == True:
                 st.session_state['kWh'] = pd.concat([st.session_state['kWh'], new_read_row], ignore_index=True)
                 st.success(f"New Reading Added for {new_Date.strftime('%-m/%d/%Y')}!")
                 time.sleep(1.0)
-
-        st.write(st.session_state['kWh'])
+        st.dataframe((st.session_state['kWh'])[(st.session_state['kWh']).Event_Type != 'Normal'], hide_index=False)
+        st.dataframe(st.session_state['kWh'], hide_index=False)
             
