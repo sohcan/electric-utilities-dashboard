@@ -3,13 +3,14 @@ import numpy as np
 import random
 
 # Re-run the exact generator pipeline so we have the clean dataset to inject into
-np.random.seed(123)
-random.seed(123)
+SEED = 541
+np.random.seed(SEED)
+random.seed(SEED)
 
 fake_utilities = ['GridPower Corp', 'Apex Electric Co.', 'Metro Utility Partners', 'Northern Lights Power', 'Sovereign Energy', 'EcoGrid Utilities']
 locations = ['Site Alpha', 'Site Bravo', 'Springfield', 'Echo Training Ground', 'Centerville Training Site', 'Springfield Armory', 'Foxtrot Maneuver Site', 'Fairview Proving Ground']
 
-num_meters = random.randint(5,100)
+num_meters = random.randint(11,31)
 fake_meters = sorted(random.sample(range(100000, 999999), num_meters))
 
 fake_loc_rows = []

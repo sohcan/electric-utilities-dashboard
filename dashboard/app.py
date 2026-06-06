@@ -61,7 +61,7 @@ if 'thresh_key' not in st.session_state:
     st.session_state['thresh_key'] = 1.0
 
 if 'fxct_key' not in st.session_state:
-    st.session_state['fxct_key'] = 6
+    st.session_state['fxct_key'] = 13
 
 if 'meter_row' not in st.session_state:
     st.session_state['meter_row'] = None
@@ -240,7 +240,7 @@ if tab2.open == True:
                 st.select_slider(
                     "Select (how many months):",
                     options= np.arange(1,48),
-                    value= 6,
+                    value= 13,
                     key="fxct_key"
                     )
                 st.markdown("Error Threshold", text_alignment="center")
@@ -271,12 +271,14 @@ if tab2.open == True:
     with st.container(border=True):
         fcst_title = st.markdown(f"""**Meter {meter} Forecast**  \nSeasonal-Trend LOESS Decomposition and Forecasting.""")  
         with st.container(border=False):
+            
+            fxct_len_options = cont_forecast[['Date','Forecast']].dropna()['Date']
+            
             fxct_len = st.select_slider(
                 "Forecast Length (by month):",
-                options = cont_forecast[['Date','Forecast']].dropna(),
+                options = fxct_len_options,
                 format_func = lambda x: x.strftime('%b %Y'),
-                value = cont_forecast['Date'].dropna().tail(1).item(),
-                key="fxct_len_key"
+                value = fxct_len_options.iloc[-1]
                 )
 
         st.space(size="small")
