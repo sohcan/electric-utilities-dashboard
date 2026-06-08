@@ -1,9 +1,11 @@
+import streamlit as st
 import pandas as pd
 from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.forecasting.stl import STLForecast
 from scipy import stats
 
+@st.cache_data
 def clean_data(df, count = 23, fxct_count = 6, prd_thresh = 6, ol_thresh = 1.5):
     dfNZ = df[df['KWH'] > 0]; dfC = dfNZ.groupby(by='Meter').count();
     out = []

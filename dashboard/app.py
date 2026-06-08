@@ -205,16 +205,16 @@ if tab1.open == True:
                 delta_description= f"{cd_USD.index[current_index].strftime('%b')} {cd_USD.index[current_index].strftime('%Y')}",
             )
 
-    st.metric(
-        "Total Energy Trend",
-        f"{cd_TRN.iloc[current_index].round():,.0f} kWh", # "${(cd_USD.sum()/cd_KWH.sum().round())*cd_KWH.iloc[current_index].sum() - (cd_USD.sum().round()/cd_KWH.sum().round())*cd_KWH.mean() :,.2f}" ,
-        f"{((cd_TRN.iloc[current_index]-cd_TRN.mean())/cd_TRN.mean())*100:.2f}%",
-        help=r"$\Delta T_t = \frac{T_t - \bar{T}}{\bar{T}}$",
-        chart_data=cd_TRN.iloc[first_index:current_index],
-        chart_type="line",
-        border=True,
-        delta_description= f"{cd_TRN.index[first_index].strftime('%b')} {cd_TRN.index[first_index].strftime('%y')} - {cd_TRN.index[current_index].strftime('%b')} {cd_TRN.index[current_index].strftime('%y')}"
-    )
+        st.metric(
+            "Total Energy Trend",
+            f"{cd_TRN.iloc[current_index].round():,.0f} kWh", # "${(cd_USD.sum()/cd_KWH.sum().round())*cd_KWH.iloc[current_index].sum() - (cd_USD.sum().round()/cd_KWH.sum().round())*cd_KWH.mean() :,.2f}" ,
+            f"{((cd_TRN.iloc[current_index]-cd_TRN.mean())/cd_TRN.mean())*100:.2f}%",
+            help=r"$\Delta T_t = \frac{T_t - \bar{T}}{\bar{T}}$",
+            chart_data=cd_TRN.iloc[first_index:current_index],
+            chart_type="line",
+            border=True,
+            delta_description= f"{cd_TRN.index[first_index].strftime('%b')} {cd_TRN.index[first_index].strftime('%y')} - {cd_TRN.index[current_index].strftime('%b')} {cd_TRN.index[current_index].strftime('%y')}"
+        )
 
 
 if tab2.open == True:
@@ -413,6 +413,7 @@ if tab3.open == True:
                         )   
 
                 st.session_state['kWh'] = pd.concat([st.session_state['kWh'], new_read_row], ignore_index=True)
+                st.cache_data.clear()
                 st.success(f"New Reading Added for {new_Date.strftime('%-m/%d/%Y')}!")
                 time.sleep(1.0)
         st.dataframe((st.session_state['kWh'])[(st.session_state['kWh']).Event_Type != 'Normal'], hide_index=False)

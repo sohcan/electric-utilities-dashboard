@@ -1,6 +1,8 @@
+import streamlit as st
 import pandas as pd
 import numpy as np
 
+@st.cache_data
 def load_installation_data(df, col='KWH', groupby='Date', sum_rows=True):
     card_data = df.groupby(groupby)
     if sum_rows==False:

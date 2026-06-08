@@ -1,7 +1,7 @@
 #Importing Raw, Quick sort by Meter Date
+import streamlit as st
 import os
 import pandas as pd
-import streamlit as st
 
 @st.cache_data
 def load_data(directory, filename, kwh=False, **kwargs):
